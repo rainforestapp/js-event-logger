@@ -5,16 +5,13 @@ require 'capybara-webkit'
 
 Bundler.require()
 
-
-Capybara.app = Rack::File.new(File.join(File.dirname(__FILE__), 'fixtures'))
+Capybara.app = Rack::File.new(File.join(File.dirname(__FILE__), '..'))
 Capybara.javascript_driver = :webkit
 
 include Capybara::DSL
 
 RSpec::Matchers.define :have_event do |event_name, options = {}|
   match do |queue|
-    
-
     !queue.nil? && queue.any? do |el|
       el.type == event_name
     end
@@ -23,24 +20,15 @@ end
 
 
 describe "Test Page", :type => :request, :js => true do
-  describe "example page" do
-    it "contains an H1 with text 'Hello World!'" do
-      visit '/example.html'
-      page.should have_css 'h1', :text => 'Hello World!'
-    end
-  end
+  let(:url) { File.join("/spec/fixtures/", page_name, "index.html") }
 
   describe "Simple HTML" do
+    let(:page_name) { 'simple-html' }
+
     it "tracks the click to new elements" do
-      visit '/simple-html/index.html'
+      visit url
       find(".foo").click
       find(".bar").click
-
-      ap page.driver.console_messages
-      ap page.driver.error_messages
-
-      ap event_queue
-      save_and_open_page
 
       event_queue.should have_event("click", on: ".foo")
       event_queue.should have_event("click", on: ".bar")
