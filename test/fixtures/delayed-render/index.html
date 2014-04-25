@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <title>Test Delayed Render</title>
+        <script type="application/javascript" src="../../../src/script.js"></script>
+        <script type="application/javascript">
+          setTimeout(function() {
+              document.write('<div class="bar">Test 2</div>');
+          }, 500);
+        </script>
+    </head>
+    <body>
+        <div class="foo">
+            Test 1
+        </div>
+    </body>
+</html>
+
