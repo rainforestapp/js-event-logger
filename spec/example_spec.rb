@@ -8,6 +8,17 @@ Capybara.javascript_driver = :webkit
 
 include Capybara::DSL
 
+RSpec::Matchers.define :have_event do |event_name, options = {}|
+  match do |queue|
+    
+
+    !queue.nil? && queue.any? do |el|
+      el.type == event_name
+    end
+  end
+end
+
+
 describe "Test Page", :type => :request, :js => true do
   describe "example page" do
     it "contains an H1 with text 'Hello World!'" do
@@ -26,6 +37,10 @@ describe "Test Page", :type => :request, :js => true do
       event_queue.should have_event("click", on: ".foo")
       event_queue.should have_event("click", on: ".bar")
     end
+  end
+
+  def event_queue
+    page.driver.evaluate_script("window.__secret_queue__")
   end
 end
 
