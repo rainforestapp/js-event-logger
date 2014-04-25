@@ -1,5 +1,4 @@
 (function() {
-
     window.addEventListener("load", function(event) {
         function EventData(type, timeStamp, data) {
             this.type = type;
@@ -14,7 +13,7 @@
                 ctrl: event.ctrlKey,
                 alt: event.altKey,
                 meta: event.metaKey,
-                shift: event.shiftKey,
+                shift: event.shiftKey
             });
         }
 
@@ -32,7 +31,7 @@
         function attachHandler(target, type, filter) {
             target.addEventListener(type, function(event) {
                 buffer_event(event, filter);
-            }, true)
+            }, true);
         }
 
         var html = document.documentElement;
@@ -50,6 +49,7 @@
         var eventSequence = 0;
         var lastSent = 0;
         var buffer = [];
+        var referrer = document.referrer;
 
         function send_event (event_buffer) {
           if (event_buffer.length == 0) {
@@ -57,12 +57,18 @@
             return false;
           }
 
+          var metadata = {
+            referrer: referrer,
+            location: window.location.toString()
+          };
+
           var httpRequest = new XMLHttpRequest();
           httpRequest.open('POST', 'http://localhost:9000/data');
           httpRequest.setRequestHeader('Content-Type', 'application/json');
           httpRequest.send(JSON.stringify({
-              eventSequence: eventSequence, 
-              events: event_buffer
+              eventSequence: eventSequence,
+              events: event_buffer,
+              metadata: metadata
           }));
         }
 
