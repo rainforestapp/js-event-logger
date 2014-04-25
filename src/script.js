@@ -57,14 +57,15 @@
             return false;
           }
 
-          var out = [];
-
           var httpRequest = new XMLHttpRequest();
           httpRequest.onreadystatechange = function () {
             console.log(httpRequest);
           };
           httpRequest.open('POST', 'http://requestb.in/p3iaskp3');
-          httpRequest.send(JSON.stringify(event_buffer));
+          httpRequest.send(JSON.stringify({
+              eventSequence: eventSequence, 
+              events: event_buffer
+          }));
         }
 
         // Save and clear the buffer
@@ -89,12 +90,10 @@
 
         function buffer_event(e, filter) {
           eventSequence++;
-
           buffer.push(filter(e));
 
           if (buffer.length > 50 || lastSent < e.timeStamp - 3000) {
             // Update last sent
-            console.log(e);
             lastSent = e.timeStamp
 
             // Send the shit
