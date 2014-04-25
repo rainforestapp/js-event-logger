@@ -1,5 +1,16 @@
+console.log('yolo');
 (function() {
-    window.addEventListener("load", function(event) {
+  // Event logging
+  var eventSequence = 0;
+  var lastSent = 0;
+  var buffer = [];
+
+  console.log('yolo');
+  // TODO delete or rename to something else. Used by capybara test suite
+  // only for now
+  window.my_secret_queue = buffer;
+
+  window.addEventListener("load", function(event) {
         console.log("load", event);
 
         var html = document.documentElement;
@@ -39,12 +50,6 @@
         html.addEventListener("mouseover", function(event) {
           buffer_event("mouse over", event);
         }, true);
-
-
-        // Event logging
-        var eventSequence = 0;
-        var lastSent = 0;
-        var buffer = [];
 
         function send_event (event_buffer) {
           if (event_buffer.length == 0) {
@@ -96,5 +101,5 @@
             send_buffer();
           }
         }
-    })()
+    });
 })();

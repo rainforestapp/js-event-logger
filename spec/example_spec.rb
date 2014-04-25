@@ -3,6 +3,9 @@ require 'rack/file'
 require 'capybara/rspec'
 require 'capybara-webkit'
 
+Bundler.require()
+
+
 Capybara.app = Rack::File.new(File.join(File.dirname(__FILE__), 'fixtures'))
 Capybara.javascript_driver = :webkit
 
@@ -27,12 +30,17 @@ describe "Test Page", :type => :request, :js => true do
     end
   end
 
-  describe "Delayed Render" do
+  describe "Simple HTML" do
     it "tracks the click to new elements" do
-      visit '/delayed-render/index.html'
+      visit '/simple-html/index.html'
       find(".foo").click
-      sleep 1
       find(".bar").click
+
+      ap page.driver.console_messages
+      ap page.driver.error_messages
+
+      ap event_queue
+      save_and_open_page
 
       event_queue.should have_event("click", on: ".foo")
       event_queue.should have_event("click", on: ".bar")
@@ -40,7 +48,7 @@ describe "Test Page", :type => :request, :js => true do
   end
 
   def event_queue
-    page.driver.evaluate_script("window.__secret_queue__")
+    page.driver.evaluate_script("window.my_secret_queue")
   end
 end
 
