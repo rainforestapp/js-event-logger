@@ -1,55 +1,54 @@
-console.log('yolo');
 (function() {
-  // Event logging
-  var eventSequence = 0;
-  var lastSent = 0;
-  var buffer = [];
+    window.addEventListener("load", function(event) {
+        function EventData(type, timeStamp, data) {
+            this.type = type;
+            this.timeStamp = timeStamp;
+            this.data = data;
+        }
 
-  console.log('yolo');
-  // TODO delete or rename to something else. Used by capybara test suite
-  // only for now
-  window.my_secret_queue = buffer;
+        function keyboardFilter(event) {
+            return new EventData(event.type, event.timeStamp, {
+                key: event.key,
+                keyCode: event.keyCode,
+                ctrl: event.ctrlKey,
+                alt: event.altKey,
+                meta: event.metaKey,
+                shift: event.shiftKey,
+            });
+        }
 
-  window.addEventListener("load", function(event) {
-        console.log("load", event);
+        function mouseFilter(event) {
+            return new EventData(event.type, event.timeStamp, {
+                x: event.clientX,
+                y: event.clientY,
+                ctrl: event.ctrlKey,
+                alt: event.altKey,
+                meta: event.metaKey,
+                shift: event.shiftKey
+            });
+        }
+
+        function attachHandler(target, type, filter) {
+            target.addEventListener(type, function(event) {
+                buffer_event(event, filter);
+            }, true)
+        }
 
         var html = document.documentElement;
+        //attachHandler(html, "keydown", keyboardFilter);
+        //attachHandler(html, "keypress", keyboardFilte;r)
+        //attachHandler(html, "keyup", keyboardFilter);
+        attachHandler(html, "click", mouseFilter);
+        //attachHandler(html, "mouseenter", keyboardFilter);
+        //attachHandler(html, "mouseleave", keyboardFilter);
+        //attachHandler(html, "mouseover", keyboardFilter);
+        //attachHandler(html, "mouseout", keyboardFilter);
+        //attachHandler(html, "mousemouve", keyboardFilter);
 
-        html.addEventListener("keydown", function(event) {
-          buffer_event("keydown", event);
-        }, true);
-
-        html.addEventListener("keypress", function(event) {
-          buffer_event("keypress", event);
-        }, true);
-
-        html.addEventListener("keyup", function(event) {
-          buffer_event("keyup", event);
-        }, true);
-
-        html.addEventListener("click", function(event) {
-          buffer_event("click", event);
-        }, true);
-
-        html.addEventListener("mousemove", function(event) {
-          buffer_event("mouse move", event);
-        }, true);
-
-        html.addEventListener("mouseenter", function(event) {
-          buffer_event("mouse enter", event);
-        }, true);
-
-        html.addEventListener("mouseleave", function(event) {
-          buffer_event("mouse leave", event);
-        }, true);
-
-        html.addEventListener("mouseout", function(event) {
-          buffer_event("mouse out", event);
-        }, true);
-
-        html.addEventListener("mouseover", function(event) {
-          buffer_event("mouse over", event);
-        }, true);
+        // Event logging
+        var eventSequence = 0;
+        var lastSent = 0;
+        var buffer = [];
 
         function send_event (event_buffer) {
           if (event_buffer.length == 0) {
@@ -62,7 +61,10 @@ console.log('yolo');
             console.log(httpRequest);
           };
           httpRequest.open('POST', 'http://requestb.in/p3iaskp3');
-          httpRequest.send(JSON.stringify({eventSequence: eventSequence, events: event_buffer}));
+          httpRequest.send(JSON.stringify({
+              eventSequence: eventSequence, 
+              events: event_buffer
+          }));
         }
 
         // Save and clear the buffer
@@ -85,16 +87,16 @@ console.log('yolo');
           send_buffer();
         })
 
-        function buffer_event(name, e) {
+        function buffer_event(e, filter) {
           eventSequence++;
-          buffer.push(name);
+          buffer.push(filter(e));
 
           if (buffer.length > 50 || lastSent < e.timeStamp - 3000) {
             // Update last sent
             lastSent = e.timeStamp
 
             // Send the shit
-            send_buffer();
+            send_buffer(buffer);
           }
         }
     });
