@@ -1,4 +1,10 @@
 (function() {
+    var eventSequence = 0;
+    var lastSent = 0;
+    var buffer = [];
+    window.my_secret_queue = buffer;
+    var referrer = document.referrer;
+
     window.addEventListener("load", function(event) {
         function EventData(type, timeStamp, data) {
             this.type = type;
@@ -46,10 +52,6 @@
         //attachHandler(html, "mousemouve", keyboardFilter);
 
         // Event logging
-        var eventSequence = 0;
-        var lastSent = 0;
-        var buffer = [];
-        var referrer = document.referrer;
 
         function send_event (event_buffer) {
           if (event_buffer.length == 0) {

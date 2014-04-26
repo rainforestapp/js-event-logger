@@ -6,14 +6,14 @@ require 'capybara-webkit'
 Bundler.require()
 
 Capybara.app = Rack::File.new(File.join(File.dirname(__FILE__), '..'))
-Capybara.javascript_driver = :webkit
+Capybara.javascript_driver = :webkit #:selenium
 
 include Capybara::DSL
 
 RSpec::Matchers.define :have_event do |event_name, options = {}|
   match do |queue|
     !queue.nil? && queue.any? do |el|
-      el.type == event_name
+      el["type"] == event_name
     end
   end
 end
