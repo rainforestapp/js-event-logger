@@ -41,15 +41,15 @@
         }
 
         var html = document.documentElement;
-        //attachHandler(html, "keydown", keyboardFilter);
-        //attachHandler(html, "keypress", keyboardFilte;r)
-        //attachHandler(html, "keyup", keyboardFilter);
+        attachHandler(html, "keydown", keyboardFilter);
+        attachHandler(html, "keypress", keyboardFilte;r)
+        attachHandler(html, "keyup", keyboardFilter);
         attachHandler(html, "click", mouseFilter);
-        //attachHandler(html, "mouseenter", keyboardFilter);
-        //attachHandler(html, "mouseleave", keyboardFilter);
-        //attachHandler(html, "mouseover", keyboardFilter);
-        //attachHandler(html, "mouseout", keyboardFilter);
-        //attachHandler(html, "mousemouve", keyboardFilter);
+        attachHandler(html, "mouseenter", keyboardFilter);
+        attachHandler(html, "mouseleave", keyboardFilter);
+        attachHandler(html, "mouseover", keyboardFilter);
+        attachHandler(html, "mouseout", keyboardFilter);
+        //attachHandler(html, "mousemove", keyboardFilter);
 
         // Event logging
 
