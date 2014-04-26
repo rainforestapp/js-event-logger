@@ -65,10 +65,8 @@
           };
 
           var httpRequest = new XMLHttpRequest();
-          httpRequest.onreadystatechange = function () {
-            console.log(httpRequest);
-          };
-          httpRequest.open('POST', 'http://requestb.in/p3iaskp3');
+          httpRequest.open('POST', 'http://localhost:9000/data');
+          httpRequest.setRequestHeader('Content-Type', 'application/json');
           httpRequest.send(JSON.stringify({
               eventSequence: eventSequence,
               events: event_buffer,
